@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Function to display a spinner
+spinner() {
+  local pid=$1
+  local delay=0.1
+  local spinstr='|/-\'
+  tput civis  # Hide the cursor
+  while kill -0 $pid 2>/dev/null; do
+    for i in $(seq 0 3); do
+      printf "\r[%c] Organizing files..." "${spinstr:$i:1}"
+      sleep $delay
+    done
+  done
+  printf "\r[✔] Organization complete!         \n"  # Clear the spinner
+  tput cnorm  # Restore the cursor
+}
+
 # Prompt user for folder names and extensions
 echo "Enter folder names and extensions in this format (FolderName:ext1,ext2,...)."
 echo "Example: Images:jpg,png Documents:pdf,docx TextFiles:txt"
@@ -36,28 +52,32 @@ echo "Organizing files from: $target_directory"
 log_file="file_organizer.log"
 echo "$(date): Files organized from $target_directory." >> "$log_file"
 
-# Parse user input and create folders
-for entry in $folder_input; do
-  # Split folder name and extensions
-  folder_name=$(echo "$entry" | cut -d':' -f1)
-  extensions=$(echo "$entry" | cut -d':' -f2 | tr ',' ' ')
+# Start the organization process in the background
+(
+  # Parse user input and create folders
+  for entry in $folder_input; do
+    # Split folder name and extensions
+    folder_name=$(echo "$entry" | cut -d':' -f1)
+    extensions=$(echo "$entry" | cut -d':' -f2 | tr ',' ' ')
 
-  moved_any_file=false
+    moved_any_file=false
 
-  # Check for files with each extension and move them
-  for ext in $extensions; do
-    if find "$target_directory" -maxdepth 1 -type f -name "*.$ext" | grep -q .; then
-      mkdir -p "$folder_name"
-      mv "$target_directory"/*."$ext" "$folder_name/" 2>/dev/null
-      moved_any_file=true
+    # Check for files with each extension and move them
+    for ext in $extensions; do
+      if find "$target_directory" -maxdepth 1 -type f -name "*.$ext" | grep -q .; then
+        mkdir -p "$folder_name"
+        mv "$target_directory"/*."$ext" "$folder_name/" 2>/dev/null
+        moved_any_file=true
+      fi
+    done
+
+    if [[ "$moved_any_file" == true ]]; then
+      echo "$folder_name: $(ls "$folder_name" 2>/dev/null)" >> "$log_file"
+    else
+      echo "No files moved to $folder_name." >> "$log_file"
     fi
   done
+) &
+spinner $!  # Call the spinner function with the PID of the background process
 
-  if [[ "$moved_any_file" == true ]]; then
-    echo "$folder_name: $(ls "$folder_name" 2>/dev/null)" >> "$log_file"
-  else
-    echo "No files moved to $folder_name." >> "$log_file"
-  fi
-done
-
-echo "Organization complete. Check $log_file for details."
+echo "Check $log_file for details."
