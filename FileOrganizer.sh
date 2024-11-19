@@ -1,12 +1,14 @@
 #!/bin/bash
 
 # ASCII Art Banner
+echo -e "\033[35m"
 echo "  _____ _ _       ___                        _              "
 echo " |  ___(_) | ___ / _ \ _ __ __ _  __ _ _ __ (_)_______ _ __ "
 echo " | |_  | | |/ _ \ | | | '__/ _\` |/ _\` | '_ \| |_  / _ \ '__|"
 echo " |  _| | | |  __/ |_| | | | (_| | (_| | | | | |/ /  __/ |   "
 echo " |_|   |_|_|\___|\___/|_|  \__, |\__,_|_| |_|_/___\___|_|   "
 echo "                          |___/   By CYBWithFlourish        "
+echo -e "\033[0m"
 echo
 echo " Welcome to the File Organizer Script! "
 echo " ------------------------------------- "
