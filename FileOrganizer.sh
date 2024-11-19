@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# ASCII Art Banner
+# https://github.com/CYBWithFlourish
+#
 echo -e "\033[35m"
 echo "  _____ _ _       ___                        _              "
 echo " |  ___(_) | ___ / _ \ _ __ __ _  __ _ _ __ (_)_______ _ __ "
