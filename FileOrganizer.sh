@@ -1,5 +1,30 @@
 #!/bin/bash
 
+
+spinner() {
+  local pid=$1
+  local delay=0.1
+  local spinstr='|/-\'
+  while ps -p $pid > /dev/null; do
+    for i in $(seq 0 3); do
+      echo -ne "\b${spinstr:$i:1}"
+      sleep $delay
+    done
+  done
+  echo -ne "\b"
+}
+
+: "
+ _____ _ _       ___                        _              
+|  ___(_) | ___ / _ \ _ __ __ _  __ _ _ __ (_)_______ _ __ 
+| |_  | | |/ _ \ | | | '__/ _` |/ _` | '_ \| |_  / _ \ '__|
+|  _| | | |  __/ |_| | | | (_| | (_| | | | | |/ /  __/ |   
+|_|   |_|_|\___|\___/|_|  \__, |\__,_|_| |_|_/___\___|_|   
+                          |___/  by CYBWithFlourish                          
+"
+
+echo -n "FileOrganizer.sh "
+
 # Prompt user for folder names and extensions
 echo "Enter folder names and extensions in this format (FolderName:ext1,ext2,...)."
 echo "Example: Images:jpg,png Documents:pdf,docx TextFiles:txt"
@@ -62,3 +87,8 @@ for entry in $folder_input; do
 done
 
 echo "Organization complete. Check $log_file for details."
+
+spinner $!
+
+wait
+echo "Task Done!!"
